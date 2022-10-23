@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} Admin - comments {% endblock %}
+
+{% block body %}
+    <div class="bg-light">
+        <div class="mb-3 container">
+            <form class="row justify-content-center py-1" action="{{ path('app_admin_comments') }}" method="get">
+                <input
+                        name="query"
+                        type="text"
+                        class="form-control w-75"
+                        placeholder="Поиск..."
+                        value="{{ app.request.get('query') }}">
+                <button type="submit" class="btn btn-secondary col-1"><i class="bi bi-search"></i></button>
+            </form>
+
+
+        </div>
+        <div class="px-3 py-1">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Автор</th>
+                    <th scope="col">Статья</th>
+                    <th scope="col">Комментарий</th>
+                    <th scope="col">Дата</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for comment in comments %}
+                    <tr>
+                        <td>{{ comment.author }}</td>
+                        <td>{{ comment.articleTitle }}</td>
+                        <td>{{ comment.content }}</td>
+                        <td>{{ comment.createdAt|timeAgo }}</td>
+
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td colspan="4">По запросу "{{ app.request.get('query') }}" ничего не найдено</td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}

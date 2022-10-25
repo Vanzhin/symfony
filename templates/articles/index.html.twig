@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ parent() }} main
+{% endblock %}
+{% block body %}
+    <div class="row mb-2">
+        {% for article in articles %}
+            <div class="col-md-6">
+                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <div>
+                            <strong class="d-inline-block mb-2 text-primary">World</strong>
+                            {{ include('components/likeButton.html.twig', {'likesCount': article.likeCount, 'slug': article.slug}) }}
+                        </div>
+                        <h3 class="mb-0">{{ article.title }}</h3>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-1 text-muted">{{ article.createdAt|timeAgo }}</div>
+                            <div class="mb-1 text-black ">{{ article.author }}</div>
+                        </div>
+
+                        <p class="card-text mb-auto">{{ article.content|slice(0,45 ) ~ '...'}}</p>
+                        <a href="{{ path('app_articles_show',{'slug': article.slug}) }}" class="stretched-link">Continue reading</a>
+                    </div>
+                    <div class="col-auto" style="display: contents">
+                        <img src="{{ asset(article.imagePath) }}" width="250" class="img-fluid" style="object-fit: cover" alt="123">
+
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-dark" role="alert">
+                Статей нет! <a href="{{ path('app_homepage') }}" class="alert-link">На главную</a>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
+
+

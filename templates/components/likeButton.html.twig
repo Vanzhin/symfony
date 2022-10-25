@@ -1,0 +1,15 @@
+<button
+        data-item="likes"
+        data-type="like"
+        data-slug={{ slug }}
+
+
+
+        type="button" class="btn btn-outline-danger">
+    <i class="bi bi-star like"></i>
+    <span data-item="likesCount">{{ likesCount }}</span>
+</button>
+
+{% block javascripts %}
+    <script src="{{ asset('js/like.js') }}"></script>
+{% endblock %}

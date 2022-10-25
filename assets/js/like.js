@@ -6,12 +6,12 @@ $(function () {
         $container.on('click', function (e){
             e.preventDefault();
             const type = $container.data('type')
-
+            const slug = $container.data('slug')
             $.ajax({
-                url: '/articles/10/like/' + type,
+                url: `/articles/${slug}/like/${type}`,
                 method: 'POST'
             }).then(function (data){
-                console.log(type);
+                console.log(data, type);
                 $container.data('type', type === 'like' ? 'dislike' : 'like')
                 $container.find('.like').toggleClass('bi-star-fill bi-star');
                 $container.find('[data-item=likesCount]').text(data.likes);

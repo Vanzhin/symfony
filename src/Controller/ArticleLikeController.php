@@ -2,31 +2,35 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LikeController extends AbstractController
+class ArticleLikeController extends AbstractController
 {
     /**
-     * @param int $id
+     * @param Article $article
      * @param string $type
      * @param LoggerInterface $logger
      * @return Response
-     * @Route("/articles/{id<\d+>}/like/{type<like|dislike>}", methods={"POST"})
+     * @Route("/articles/{slug<\S+>}/like/{type<like|dislike>}", methods={"POST"})
      */
 
-    public function like(int $id, string $type, LoggerInterface $logger): Response
+    public function like(Article $article, string $type, LoggerInterface $logger, EntityManagerInterface $em): Response
     {
         if ($type === "like"){
-            $like = rand(50,100);
+            $like = $article->like();
             $logger->info('like ' . date("H:i:s"));
         } else{
-            $like = rand(1,49);
+            $like = $article->dislike();
             $logger->info('dislike ' . date("H:i:s"));
-
         }
+        $em->persist($article);
+
+        $em->flush();
         return $this->json(['likes' => $like]);
     }
 }

@@ -16,22 +16,22 @@
         </div>
 
     </div>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {% for comment in comments %}
+    <div class="d-flex flex-column gap-1 mb-2">
+        {% for comment in article.comments %}
             <div class="col">
                 <div class="card shadow-sm">
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
-                         xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
-                         preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title>
-                        <rect width="100%" height="100%" fill="#55595c"></rect>
-                        <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-                    </svg>
-
+                    <div class="card-header">
+                        <span class="text-black">{{ comment.createdAt|timeAgo }}</span>
+                        <span class="text-muted">{{ comment.authorName }}</span>
+                        {% if comment.deletedAt %}
+                        <span class="text-muted">deleted</span>
+                        {% endif %}
+                    </div>
                     <div class="card-body">
-                        <p class="card-text">{{ comment }}</p>
+                        <p class="card-text">{{ comment.content }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">Delete</button>
                                 <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
                             </div>
                             <small class="text-muted">9 mins</small>

@@ -11,7 +11,6 @@ $(function () {
                 url: `/articles/${slug}/like/${type}`,
                 method: 'POST'
             }).then(function (data){
-                console.log(data, type);
                 $container.data('type', type === 'like' ? 'dislike' : 'like')
                 $container.find('.like').toggleClass('bi-star-fill bi-star');
                 $container.find('[data-item=likesCount]').text(data.likes);

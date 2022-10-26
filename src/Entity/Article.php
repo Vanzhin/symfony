@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
+    use TimestampableEntity;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,9 +25,10 @@ class Article
     private ?string $content = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTime $publishedAt = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Gedmo\Slug(fields: ['title'])]
     private ?string $slug = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -34,6 +39,7 @@ class Article
 
     #[ORM\Column(nullable: true)]
     private ?int $likeCount = null;
+
 
     public function getId(): ?int
     {
@@ -64,14 +70,14 @@ class Article
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getPublishedAt(): ?\DateTime
     {
-        return $this->createdAt;
+        return $this->publishedAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setPublishedAt(\DateTime $publishedAt): self
     {
-        $this->createdAt = $createdAt;
+        $this->publishedAt = $publishedAt;
 
         return $this;
     }
@@ -79,13 +85,6 @@ class Article
     public function getSlug(): ?string
     {
         return $this->slug;
-    }
-
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
     }
 
     public function getImage(): ?string
@@ -126,7 +125,7 @@ class Article
 
     public function getImagePath(): string
     {
-        return $this->getImage() ? '/images/' . $this->getImage(): '/images/test.jpeg';
+        return $this->getImage() ? '/images/' . $this->getImage() : '/images/test.jpeg';
     }
 
     public function like(): string

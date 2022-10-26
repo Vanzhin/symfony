@@ -43,10 +43,10 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[] Returns an array of Article objects
      */
-    public function findLatest(): array
+    public function findPublishedLatest(): array
     {
         $queryBuilder = $this->createQueryBuilder('a');
-        return $this->latest($queryBuilder)
+        return $this->published($this->latest($queryBuilder))
             ->getQuery()
             ->getResult();
     }
@@ -54,6 +54,12 @@ class ArticleRepository extends ServiceEntityRepository
     private function latest(QueryBuilder $queryBuilder = null): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder($queryBuilder)->orderBy('a.createdAt', 'DESC');
+
+    }
+
+    private function published(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder($queryBuilder)->andWhere('a.publishedAt IS NOT NULL');
 
     }
 

@@ -28,8 +28,6 @@ class ArticleLikeController extends AbstractController
             $like = $article->dislike();
             $logger->info('dislike ' . date("H:i:s"));
         }
-        $em->persist($article);
-
         $em->flush();
         return $this->json(['likes' => $like]);
     }

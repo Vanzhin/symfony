@@ -15,6 +15,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
+#[ORM\Index(columns: ["author"], name: "author_idx")]
 class Article
 {
     use TimestampableEntity, SoftDeleteableEntity;

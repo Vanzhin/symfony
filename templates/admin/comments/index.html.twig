@@ -6,13 +6,29 @@
     <div class="bg-light">
         <div class="mb-3 container">
             <form class="row justify-content-center py-1" action="{{ path('app_admin_comments') }}" method="get">
-                <input
-                        name="query"
-                        type="text"
-                        class="form-control w-75"
-                        placeholder="Поиск..."
-                        value="{{ app.request.get('query') }}">
-                <button type="submit" class="btn btn-secondary col-1"><i class="bi bi-search"></i></button>
+                <div class="p-2">
+                    <div class="d-flex">
+                        <input
+                                name="query"
+                                type="text"
+                                class="form-control w-75"
+                                placeholder="Поиск..."
+                                value="{{ app.request.get('query') }}">
+                        <button type="submit" class="btn btn-secondary col-1"><i class="bi bi-search"></i></button>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="showDeleted"
+                               value="true"
+                               id="flexCheckDefault"
+                               {% if app.request.query.has('showDeleted')%}checked{% endif %}
+                        >
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Показывать удаленные
+                        </label>
+                    </div>
+                </div>
             </form>
 
 
@@ -30,11 +46,11 @@
                 <tbody>
                 {% for comment in comments %}
                     <tr>
-                        <td>{{ comment.author }}</td>
-                        <td>{{ comment.articleTitle }}</td>
-                        <td>{{ comment.content }}</td>
-                        <td>{{ comment.publishedAt|timeAgo }}</td>
-
+                        <td>{{ comment.authorName }}</td>
+                        <td>{{ comment.article.title }}</td>
+                        <td>{{ comment.content }} {% if comment.deleted %}<span
+                                    class="text-danger"> deleted</span>{% endif %}</td>
+                        <td>{{ comment.createdAt|timeAgo }}</td>
                     </tr>
 
                 {% else %}

@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use App\Service\SlackService;
+use \Symfony\Component\HttpFoundation\Request;
+use Knp\Component\Pager\PaginatorInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,13 +18,18 @@ class ArticleController extends AbstractController
      * @Route("/articles", name="app_articles_index", )
      */
 
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(ArticleRepository $articleRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $articles = $articleRepository->findPublishedLatest();
+        $articles = $articleRepository->findPublishedLatestQuery();
+        $pagination = $paginator->paginate(
+            $articles, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
 
         return $this->render('articles/index.html.twig',
             [
-                'articles' => $articles
+                'pagination' => $pagination
             ]
 
         );

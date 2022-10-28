@@ -55,6 +55,8 @@ class CommentRepository extends ServiceEntityRepository
         return $queryBuilder
             ->innerJoin('c.article', 'a' )
             ->addSelect('a')
+            ->innerJoin('a.tags', 't' )
+            ->addSelect('t')
             ->orderBy('c.createdAt', 'DESC');
     }
 }

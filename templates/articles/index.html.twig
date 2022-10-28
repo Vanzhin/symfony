@@ -4,30 +4,33 @@
 {% endblock %}
 {% block body %}
     <div class="row mb-2">
-        {% for article in articles %}
+        {% for article in pagination %}
+
             <div class="col-md-6">
                 <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                     <div class="col p-4 d-flex flex-column position-static">
                         <div class="d-flex justify-content-start gap-2 align-items-center">
                             <strong class="d-inline-block mb-2 text-primary">World</strong>
-                            {{ include('components/likeButton.html.twig', {'likesCount': article.likeCount, 'slug': article.slug}) }}
+                            {{ include('components/like_button.html.twig', {'likesCount': article.likeCount, 'slug': article.slug}) }}
                             <div>
                                 {{ article.comments|length }}
                                 <i class="bi bi-chat-left-dots"></i>
                             </div>
                         </div>
-                        <h3 class="mb-0">{{ article.title }}</h3>
+                        <h3 class="mb-0">
+                            <a class="text-decoration-none text-dark" href="{{ path('app_articles_show', {'slug': article.slug}) }}">{{ article.title }}</a>
+                        </h3>
                         <div class="d-flex justify-content-between">
                             <div class="mb-1 text-muted">{{ article.publishedAt|timeAgo }}</div>
                             <div class="mb-1 text-black ">{{ article.author }}</div>
                         </div>
 
-                        <p class="card-text mb-auto">{{ article.content|slice(0,45 ) ~ '...'}}</p>
-                        <a href="{{ path('app_articles_show',{'slug': article.slug}) }}" class="stretched-link">Continue reading</a>
+                        <p class="card-text mb-auto">{{ article.content|slice(0,45 ) ~ '...' }}</p>
+                        {{ include('components/tags.html.twig', {'tags': article.tags}) }}
                     </div>
                     <div class="col-auto" style="display: contents">
-                        <img src="{{ asset(article.imagePath) }}" width="250" class="img-fluid" style="object-fit: cover" alt="123">
-
+                        <img src="{{ asset(article.imagePath) }}" width="250" class="img-fluid"
+                             style="object-fit: cover" alt="123">
                     </div>
                 </div>
             </div>
@@ -36,7 +39,9 @@
                 Статей нет! <a href="{{ path('app_homepage') }}" class="alert-link">На главную</a>
             </div>
         {% endfor %}
-
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
     </div>
 {% endblock %}
 

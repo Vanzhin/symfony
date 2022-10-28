@@ -40,18 +40,16 @@ class ArticleRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @return Article[] Returns an array of Article objects
-     */
-    public function findPublishedLatest(): array
+
+    public function findPublishedLatestQuery(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('a');
         return
             $this->published($this->latest($queryBuilder))
             ->innerJoin('a.comments', 'c' )
             ->addSelect('c')
-            ->getQuery()
-            ->getResult();
+            ->innerJoin('a.tags', 't' )
+            ->addSelect('t');
     }
 
     private function latest(QueryBuilder $queryBuilder = null): QueryBuilder

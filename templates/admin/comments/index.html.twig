@@ -22,7 +22,7 @@
                                name="showDeleted"
                                value="true"
                                id="flexCheckDefault"
-                               {% if app.request.query.has('showDeleted')%}checked{% endif %}
+                               {% if app.request.query.has('showDeleted') %}checked{% endif %}
                         >
                         <label class="form-check-label" for="flexCheckDefault">
                             Показывать удаленные
@@ -30,8 +30,9 @@
                     </div>
                 </div>
             </form>
-
-
+        </div>
+        <div class="count h2 text-center">
+            Комментарии ({{ pagination.getTotalItemCount }})
         </div>
         <div class="px-3 py-1">
             <table class="table table-striped">
@@ -44,10 +45,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for comment in comments %}
+                {% for comment in pagination %}
                     <tr>
                         <td>{{ comment.authorName }}</td>
-                        <td>{{ comment.article.title }}</td>
+                        <td><a href="{{ path('app_articles_show',{'slug': comment.article.slug}) }}"
+                               class="link-primary"> {{ comment.article.title }}</a></td>
                         <td>{{ comment.content }} {% if comment.deleted %}<span
                                     class="text-danger"> deleted</span>{% endif %}</td>
                         <td>{{ comment.createdAt|timeAgo }}</td>
@@ -62,7 +64,9 @@
                 </tbody>
 
             </table>
-
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+            </div>
         </div>
     </div>
 

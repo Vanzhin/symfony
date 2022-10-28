@@ -27,24 +27,8 @@ class ArticleFixtures extends BaseFixtures
                 ->setPublishedAt(new \DateTime(rand(-10, 0) . ' days'))
                 ->setAuthor($this->faker->randomElement(self::$authors))
                 ->setLikeCount($this->faker->numberBetween(0, 25));
-
-            $this->addComments($article,10, $manager);
         });
 
-    }
-    private function addComments(Article $article, int $count, ObjectManager $manager)
-    {
-        for ($i=0;$i<rand(0,$count);$i++){
-            $comment = (new Comment())
-                ->setAuthorName($this->faker->firstName)
-                ->setContent($this->faker->paragraph)
-                ->setCreatedAt($this->faker->dateTimeBetween)
-                ->setArticle($article);
-            if ($this->faker->boolean){
-                $comment->setDeletedAt($this->faker->dateTimeBetween('-10 days', '-1 days'));
-            }
-            $manager->persist($comment);
-        }
     }
 
 }

@@ -2,10 +2,10 @@
 
 namespace App\Repository;
 
-use App\Entity\Article;
 use App\Entity\Comment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use \Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<Comment>
@@ -40,7 +40,7 @@ class CommentRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllWithSearch(?string $search = null, bool $deleted = false): array
+    public function findAllWithSearchQuery(?string $search = null, bool $deleted = false): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('c');
         if ($search){
@@ -55,8 +55,6 @@ class CommentRepository extends ServiceEntityRepository
         return $queryBuilder
             ->innerJoin('c.article', 'a' )
             ->addSelect('a')
-            ->orderBy('c.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('c.createdAt', 'DESC');
     }
 }

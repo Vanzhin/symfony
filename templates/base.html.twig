@@ -39,13 +39,13 @@
                         <div class="dropdown text-end">
                             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
-                                     class="rounded-circle">
+                                <img src="{{ app.user.avatarUrl(40) }}" alt="avatar"
+                                     class="rounded-circle bg-light">
                             </a>
                             <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
                                 <li><a class="dropdown-item" href="#">New project...</a></li>
                                 <li><a class="dropdown-item" href="#">Settings</a></li>
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_account') }}">Profile</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
@@ -79,6 +79,10 @@
     </div>
 {% endblock %}
 <main class="container">
+    {% if is_granted('IS_IMPERSONATOR') %}
+        <div class="alert alert-warning d-block">Вы находитесь в режиме испонения роли <a  role="alert" href="{{ impersonation_exit_path(path('app_homepage') ) }}">Выйти</a></div>
+    {% endif %}
+
     {% block body %}
     {% endblock %}
 </main>

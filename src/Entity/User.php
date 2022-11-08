@@ -54,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -110,5 +110,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getAvatarUrl(int $size = null): string
+    {
+        $string = sprintf("https://robohash.org/set_set3/%s.png",
+            mb_strtolower(str_replace(' ', '_', $this->name))
+        );
+        if ($size){
+            $string .= "?size={$size}x{$size}";
+
+        }
+        return $string;
     }
 }

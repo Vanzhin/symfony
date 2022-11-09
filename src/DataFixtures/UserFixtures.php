@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\ApiToken;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -26,6 +27,7 @@ class UserFixtures extends BaseFixtures
                 ->setEmail('admin@admin.ru')
                 ->setPassword($this->hasher->hashPassword($user, '123456789'))
             ->setRoles(['ROLE_ADMIN']);
+            $manager->persist(new ApiToken($user));
         });
 
         $this->createMany(User::class, 10, function (User $user) use ($manager) {
@@ -33,6 +35,8 @@ class UserFixtures extends BaseFixtures
                 ->setName($this->faker->firstName())
                 ->setEmail($this->faker->email())
                 ->setPassword($this->hasher->hashPassword($user, '123456789'));
+
+            $manager->persist(new ApiToken($user));
         });
     }
 }

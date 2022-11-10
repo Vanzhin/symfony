@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Form\ArticleFormType;
 use App\Repository\ArticleRepository;
 use App\Service\SlackService;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\True_;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use \Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
@@ -64,6 +68,35 @@ class ArticleController extends AbstractController
     public function edit(Article $article)
     {
         return new Response('страница редактирования статьи: ' . $article->getContent());
+    }
+
+    #[Route("/article/create", name: 'app_article_create')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+
+    public function create(Request $request, EntityManagerInterface $em)
+    {
+        $form = $this->createForm(ArticleFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            /**
+             * @var Article $article
+             */
+            $article = $form->getData();
+
+            if (!$this->isGranted('ROLE_ADMIN_ARTICLES')){
+                $article
+                    ->setAuthor($this->getUser());
+            }
+
+            $em->persist($article);
+            $em->flush();
+            $this->addFlash('article_flash', 'Статья создана.');
+            return $this->redirectToRoute('app_articles_index');
+        }
+
+        return $this->render('articles/create.html.twig',[
+            'articleForm' => $form->createView(),
+        ]);
     }
 
 }

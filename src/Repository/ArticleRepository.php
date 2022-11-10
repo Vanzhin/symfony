@@ -46,9 +46,9 @@ class ArticleRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('a');
         return
             $this->published($this->latest($queryBuilder))
-            ->innerJoin('a.comments', 'c' )
+            ->leftJoin('a.comments', 'c' )
             ->addSelect('c')
-            ->innerJoin('a.tags', 't' )
+            ->leftJoin('a.tags', 't' )
             ->addSelect('t');
     }
 
@@ -68,6 +68,9 @@ class ArticleRepository extends ServiceEntityRepository
     {
         return $queryBuilder ?? $this->createQueryBuilder('a');
     }
+
+
+
 //    public function findOneBySomeField($value): ?Article
 //    {
 //        return $this->createQueryBuilder('a')

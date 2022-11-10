@@ -82,6 +82,14 @@
     {% if is_granted('IS_IMPERSONATOR') %}
         <div class="alert alert-warning d-block">Вы находитесь в режиме испонения роли <a  role="alert" href="{{ impersonation_exit_path(path('app_homepage') ) }}">Выйти</a></div>
     {% endif %}
+    {% if(app.session.flashBag.peek('article_flash')|length > 0) %}
+        <div class="alert alert-warning d-block">
+            {% for message in app.flashes('article_flash') %}
+                <p> {{ message }}</p>
+            {% endfor %}
+        </div>
+
+    {% endif %}
 
     {% block body %}
     {% endblock %}

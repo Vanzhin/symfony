@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} Login{% endblock %}
+{% block title %}{{ parent() }} Register{% endblock %}
 
 {% block body %}
     <div class="container form-control w-50 my-4">
@@ -15,13 +15,16 @@
                 </div>
             {% endif %}
 
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
+            <label for="inputName">Name</label>
+            <input type="text" name="name" id="inputName" class="form-control"
+                   required>
             <label for="inputEmail">Email</label>
-            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control"
+            <input type="email" name="email" id="inputEmail" class="form-control"
                    autocomplete="email" required autofocus>
             <label for="inputPassword">Password</label>
             <input type="password" name="password" id="inputPassword" class="form-control"
-                   autocomplete="current-password" required>
+                   required>
 
             <input type="hidden" name="_csrf_token"
                    value="{{ csrf_token('authenticate') }}"
@@ -31,21 +34,9 @@
             Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
             See https://symfony.com/doc/current/security/remember_me.html
             #}
-
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" name="_remember_me"> Remember me
-                </label>
-            </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-lg btn-primary mt-2" type="submit">
-                    Sign in
-                </button>
-                <div>
-                    Not registered yet? <a href="{{ path('app_register') }}">Sign up</a>
-                </div>
-            </div>
-
+            <button class="btn btn-lg btn-primary mt-2" type="submit">
+                Sign up
+            </button>
         </form>
 
     </div>

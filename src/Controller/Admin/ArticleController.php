@@ -22,4 +22,7 @@ class ArticleController extends AbstractController
     {
         return new Response('здесь будет страница создания статьи');
     }
+
+
+
 }

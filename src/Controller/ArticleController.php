@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use App\Service\SlackService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use \Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -26,7 +27,6 @@ class ArticleController extends AbstractController
             $request->query->getInt('page', 1)/*page number*/,
             10/*limit per page*/
         );
-
         return $this->render('articles/index.html.twig',
             [
                 'pagination' => $pagination
@@ -58,4 +58,12 @@ class ArticleController extends AbstractController
 
         );
     }
+    #[Route("/article/{id}/edit", name: 'app_article_edit')]
+    #[IsGranted('MANAGE_ARTICLE','article')]
+
+    public function edit(Article $article)
+    {
+        return new Response('страница редактирования статьи: ' . $article->getContent());
+    }
+
 }

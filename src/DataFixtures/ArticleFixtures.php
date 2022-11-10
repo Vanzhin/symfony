@@ -5,30 +5,21 @@ namespace App\DataFixtures;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Tag;
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
 {
-    private static array $authors = [
-        'Nick',
-        'Pjotr',
-        'Louis',
-        'Leo',
-        'Hren',
-        'Gregory',
-        'Julia',
-        'David'
-    ];
 
     public function loadData(ObjectManager $manager): void
     {
-        $this->createMany(Article::class, 12, function (Article $article) use ($manager) {
+        $this->createMany(Article::class, 100, function (Article $article) use ($manager) {
             $title = $this->faker->words(3, true);
             $article->setTitle($title)
                 ->setContent($this->faker->paragraphs($this->faker->numberBetween(2, 5), true))
                 ->setPublishedAt(new \DateTime(rand(-10, 0) . ' days'))
-                ->setAuthor($this->faker->randomElement(self::$authors))
+                ->setAuthor($this->getRandomReferences(User::class))
                 ->setLikeCount($this->faker->numberBetween(0, 25));
 
             $tags = [];
@@ -46,7 +37,8 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            TagFixtures::class
+            TagFixtures::class,
+            UserFixtures::class
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Article;
+use App\Entity\Tag;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -37,15 +38,25 @@ class ArticleFormType extends AbstractType
                 'attr' => ['rows' => 5]
 
             ])
-            ->add('publishedAt', DateTimeType::class,[
-                'widget'=>'single_text'
-            ]);
+            ->add('publishedAt', DateTimeType::class, [
+                'widget' => 'single_text'
+            ])
+            ->add('tags', EntityType::class, [
+                    'label' => 'Тэг',
+                    'class' => Tag::class,
+                    'choice_label' => 'title',
+                    'multiple' => true
+                ]
 
-        if($this->checker->isGranted('ROLE_ADMIN_ARTICLES')) {
+            );
+
+
+        if ($this->checker->isGranted('ROLE_ADMIN_ARTICLES')) {
             $builder->add('author', EntityType::class, [
+                'label' => 'Автор',
                 'class' => User::class,
-                'choice_label' => function(User $user){
-                return "{$user->getName()} (id: {$user->getId()})";
+                'choice_label' => function (User $user) {
+                    return "{$user->getName()} (id: {$user->getId()})";
                 },
                 'choices' => $this->userRepository->findAllSortedByName()
             ]);

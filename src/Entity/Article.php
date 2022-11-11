@@ -18,6 +18,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 class Article
 {
     use TimestampableEntity, SoftDeleteableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,8 +44,7 @@ class Article
     private ?int $likeCount = null;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, fetch: 'EXTRA_LAZY')]
-    #[ORM\OrderBy(['createdAt'=>'DESC'])]
-
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $comments;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'articles')]
@@ -54,10 +54,15 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
+
+    #[ORM\ManyToMany(targetEntity: Like::class, inversedBy: 'articles')]
+    private Collection $likes;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
 
@@ -159,7 +164,7 @@ class Article
      */
     public function getNonDeletedComments(): Collection
     {
-        $criteria = Criteria::create()->andWhere(Criteria::expr()->isNull('deletedAt'))->orderBy(['createdAt'=>'DESC']);
+        $criteria = Criteria::create()->andWhere(Criteria::expr()->isNull('deletedAt'))->orderBy(['createdAt' => 'DESC']);
         return $this->comments->matching($criteria);
     }
 
@@ -220,5 +225,44 @@ class Article
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Like $like): self
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Like $like): self
+    {
+        $this->likes->removeElement($like);
+
+        return $this;
+    }
+
+    public function isLikedBy(?User $user): bool|Like
+    {
+        if ($user) {
+            foreach ($user->getLikes() as $like) {
+                if ($this->getLikes()->contains($like)) {
+                    return $like;
+                }
+            }
+        }
+
+        return false;
+
+    }
+
 
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Like;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,22 +14,34 @@ class ArticleLikeController extends AbstractController
 {
     /**
      * @param Article $article
-     * @param string $type
      * @param LoggerInterface $logger
      * @return Response
-     * @Route("/articles/{slug<\S+>}/like/{type<like|dislike>}", methods={"POST"})
+     * @Route("/articles/{slug<\S+>}/like", methods={"POST"})
      */
 
-    public function like(Article $article, string $type, LoggerInterface $logger, EntityManagerInterface $em): Response
+    public function like(Article $article, LoggerInterface $logger, EntityManagerInterface $em): Response
     {
-        if ($type === "like"){
-            $like = $article->like();
-            $logger->info('like ' . date("H:i:s"));
-        } else{
-            $like = $article->dislike();
-            $logger->info('dislike ' . date("H:i:s"));
+        $user = $this->getUser();
+        if ($user) {
+            $like = $article->isLikedBy($user);
+            if ($like) {
+                $article->removeLike($like);
+                $logger->info('dislike ' . date("H:i:s"));
+
+            } else {
+                $like = new Like();
+                $like->setUser($this->getUser());
+                $article->addLike($like);
+                $logger->info('like ' . date("H:i:s"));
+
+            }
+            $em->persist($like);
+            $em->flush();
+            $count = $article->getLikes()->count();
+
+            return $this->json(['likes' => $count]);
+
         }
-        $em->flush();
-        return $this->json(['likes' => $like]);
+        return $this->json(['likes' => 'noUser']);
     }
 }

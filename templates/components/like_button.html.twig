@@ -1,15 +1,21 @@
-<button
+<button {% if(app.user is same as(null)) %}
+    data-bs-toggle="modal"
+    data-bs-target="#noUserModal"
+{% endif %}
         data-item="likes"
         data-type="like"
         data-slug={{ slug }}
 
 
-
         type="button" class="btn btn-outline-danger">
-    <i class="bi bi-star like"></i>
+    {% if isLikedByUser %}
+        <i class="bi bi-star-fill like"></i>
+    {% else %}
+        <i class="bi bi-star like"></i>
+    {% endif %}
     <span data-item="likesCount">{{ likesCount }}</span>
 </button>
 
-{% block javascripts %}
-    <script src="{{ asset('js/like.js') }}"></script>
-{% endblock %}
+{# {% block javascripts %} #}
+{#    <script src="{{ asset('js/like.js') }}"></script> #}
+{# {% endblock %} #}

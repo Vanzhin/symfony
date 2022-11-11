@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -68,6 +69,7 @@ class ArticleRepository extends ServiceEntityRepository
     {
         return $queryBuilder ?? $this->createQueryBuilder('a');
     }
+
 
 
 

@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Article;
-use App\Entity\Comment;
+use App\Entity\Like;
 use App\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -20,7 +20,8 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
                 ->setContent($this->faker->paragraphs($this->faker->numberBetween(2, 5), true))
                 ->setPublishedAt(new \DateTime(rand(-10, 0) . ' days'))
                 ->setAuthor($this->getRandomReferences(User::class))
-                ->setLikeCount($this->faker->numberBetween(0, 25));
+                ->setLikeCount($this->faker->numberBetween(0, 25))
+                ->addLike($this->getRandomReferences(Like::class));
 
             $tags = [];
             for ($i = 0; $i < $this->faker->numberBetween(0, 5); $i++) {
@@ -38,7 +39,8 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
     {
         return [
             TagFixtures::class,
-            UserFixtures::class
+            UserFixtures::class,
+            LikeFixtures::class
         ];
     }
 }

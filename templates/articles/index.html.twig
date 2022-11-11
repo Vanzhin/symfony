@@ -10,7 +10,7 @@
                     <div class="col p-4 d-flex flex-column position-static">
                         <div class="d-flex justify-content-start gap-2 align-items-center">
                             <strong class="d-inline-block mb-2 text-primary">World</strong>
-                            {{ include('components/like_button.html.twig', {'likesCount': article.likeCount, 'slug': article.slug}) }}
+                            {{ include('components/like_button.html.twig', {'likesCount': article.likes.count, 'slug': article.slug, 'isLikedByUser':article.isLikedBy(app.user)}) }}
                             <div>
                                 {{ article.comments|length }}
                                 <i class="bi bi-chat-left-dots"></i>

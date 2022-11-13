@@ -46,7 +46,9 @@
                                 </div>
                                 <div class="mb-1 text-muted flex-grow-1">{{ article.publishedAt|timeAgo }}</div>
                                 <div class="gap-3 d-flex justify-content-end align-items-center">
-                                    <i class="bi bi-pencil"></i>
+                                    <a href="{{ path('app_article_edit', {'id': article.id}) }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
                                     <i class="bi bi-x-lg"></i>
                                 </div>
                             </div>

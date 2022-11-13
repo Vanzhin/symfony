@@ -8,6 +8,8 @@ use App\Repository\ArticleRepository;
 use App\Service\SlackService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use \Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -60,41 +62,61 @@ class ArticleController extends AbstractController
 
         );
     }
-    #[Route("/article/{id}/edit", name: 'app_article_edit')]
-    #[IsGranted('MANAGE_ARTICLE','article')]
 
-    public function edit(Article $article)
+    #[Route("/article/{id}/edit", name: 'app_article_edit')]
+    #[IsGranted('MANAGE_ARTICLE', 'article')]
+    public function edit(Article $article, Request $request, EntityManagerInterface $em): Response
     {
-        return new Response('страница редактирования статьи: ' . $article->getContent());
+        $form = $this->createForm(ArticleFormType::class, $article);
+        if ($this->formHandle($form, $request, $em)) {
+            $this->addFlash('article_flash', 'Статья обновлена.');
+            return $this->redirectToRoute('app_articles_index');
+        }
+
+        return $this->render('articles/create.html.twig', [
+            'articleForm' => $form->createView(),
+            'buttonText' => 'Обновить',
+            'titleText' => 'Обновление статьи'
+        ]);
     }
 
     #[Route("/article/create", name: 'app_article_create')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-
-    public function create(Request $request, EntityManagerInterface $em)
+    public function create(Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ArticleFormType::class);
+        if ($this->formHandle($form, $request, $em)) {
+            $this->addFlash('article_flash', 'Статья создана.');
+            return $this->redirectToRoute('app_articles_index');
+        }
+
+        return $this->render('articles/create.html.twig', [
+            'articleForm' => $form->createView(),
+            'buttonText' => 'Создать',
+            'titleText' => 'Создание статьи'
+        ]);
+    }
+
+    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em): ?FormInterface
+    {
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             /**
              * @var Article $article
              */
             $article = $form->getData();
 
-            if (!$this->isGranted('ROLE_ADMIN_ARTICLES')){
+            if (!$this->isGranted('ROLE_ADMIN_ARTICLES')) {
                 $article
                     ->setAuthor($this->getUser());
             }
 
             $em->persist($article);
             $em->flush();
-            $this->addFlash('article_flash', 'Статья создана.');
-            return $this->redirectToRoute('app_articles_index');
-        }
+            return $form;
 
-        return $this->render('articles/create.html.twig',[
-            'articleForm' => $form->createView(),
-        ]);
+        }
+        return null;
     }
 
 }

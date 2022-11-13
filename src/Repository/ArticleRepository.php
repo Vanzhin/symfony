@@ -46,7 +46,7 @@ class ArticleRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('a');
         return
-            $this->published($this->latest($queryBuilder))
+            $this->published($this->latestUpdated($queryBuilder))
                 ->leftJoin('a.comments', 'c')
                 ->addSelect('c')
                 ->leftJoin('a.tags', 't')
@@ -56,6 +56,11 @@ class ArticleRepository extends ServiceEntityRepository
     private function latest(QueryBuilder $queryBuilder = null): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder($queryBuilder)->orderBy('a.createdAt', 'DESC');
+
+    }
+    private function latestUpdated(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder($queryBuilder)->orderBy('a.updatedAt', 'DESC');
 
     }
 

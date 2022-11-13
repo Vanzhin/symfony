@@ -1,12 +1,9 @@
 {% extends 'base.html.twig' %}
-{% block title %} {{ parent() }} Создание статьи {% endblock %}
+{% block title %} {{ parent() }} {{ titleText }} {% endblock %}
 {% block body %}
     <div class="container form-control w-75 my-4">
-        <h1>Создание статьи</h1>
-        {{ form_start(articleForm) }}
-        {{ form_widget(articleForm) }}
-        <button class="btn btn-primary" type="submit">Создать</button>
-        {{ form_end(articleForm) }}
+        <h1>{{ titleText }}</h1>
+        {{ include('articles/form.thml.twig', {'buttonText': buttonText}) }}
     </div>
 
 {% endblock body %}

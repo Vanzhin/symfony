@@ -15,6 +15,9 @@
                                 {{ article.comments|length }}
                                 <i class="bi bi-chat-left-dots"></i>
                             </div>
+                            {% if is_granted('MANAGE_ARTICLE', article) %}
+                            {{ include('components/edit_group_button.html.twig', {'id': article.id}) }}
+                            {% endif %}
                         </div>
                         <h3 class="mb-0">
                             <a class="text-decoration-none text-dark" href="{{ path('app_articles_show', {'slug': article.slug}) }}">{{ article.title }}</a>

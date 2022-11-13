@@ -8,7 +8,6 @@ use App\Repository\ArticleRepository;
 use App\Service\SlackService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use \Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
@@ -78,6 +77,16 @@ class ArticleController extends AbstractController
             'buttonText' => 'Обновить',
             'titleText' => 'Обновление статьи'
         ]);
+    }
+    #[Route("/article/{id}/delete", name: 'app_article_delete')]
+    #[IsGranted('MANAGE_ARTICLE', 'article')]
+    public function delete(Article $article, EntityManagerInterface $em): Response
+    {
+        $em->remove($article);
+        $em->flush();
+        $this->addFlash('article_flash', 'Статья удалена.');
+        return $this->redirectToRoute('app_articles_index');
+
     }
 
     #[Route("/article/create", name: 'app_article_create')]

@@ -45,12 +45,7 @@
                                     </span>
                                 </div>
                                 <div class="mb-1 text-muted flex-grow-1">{{ article.publishedAt|timeAgo }}</div>
-                                <div class="gap-3 d-flex justify-content-end align-items-center">
-                                    <a href="{{ path('app_article_edit', {'id': article.id}) }}">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <i class="bi bi-x-lg"></i>
-                                </div>
+                                {{ include('components/edit_group_button.html.twig', {'id': article.id}) }}
                             </div>
                             {{ article.content|slice(0,45 ) ~ '...' }}
                         </div>

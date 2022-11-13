@@ -31,7 +31,7 @@ class ArticleFormType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Заголовок'
+                'label' => 'Заголовок',
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'Содержание ',

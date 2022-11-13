@@ -11,6 +11,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -25,12 +26,17 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
+
     private ?string $content = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotNull]
+
     private ?\DateTime $publishedAt = null;
 
     #[ORM\Column(length: 100, unique: true)]
@@ -39,9 +45,6 @@ class Article
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $likeCount = null;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, fetch: 'EXTRA_LAZY')]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
@@ -124,31 +127,10 @@ class Article
         return $this;
     }
 
-    public function getLikeCount(): ?int
-    {
-        return $this->likeCount;
-    }
-
-    public function setLikeCount(?int $likeCount): self
-    {
-        $this->likeCount = $likeCount;
-
-        return $this;
-    }
 
     public function getImagePath(): string
     {
         return $this->getImage() ? '/images/' . $this->getImage() : '/images/test.jpeg';
-    }
-
-    public function like(): string
-    {
-        return ++$this->likeCount;
-    }
-
-    public function dislike(): string
-    {
-        return --$this->likeCount;
     }
 
     /**

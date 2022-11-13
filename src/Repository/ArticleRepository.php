@@ -47,10 +47,10 @@ class ArticleRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('a');
         return
             $this->published($this->latest($queryBuilder))
-            ->leftJoin('a.comments', 'c' )
-            ->addSelect('c')
-            ->leftJoin('a.tags', 't' )
-            ->addSelect('t');
+                ->leftJoin('a.comments', 'c')
+                ->addSelect('c')
+                ->leftJoin('a.tags', 't')
+                ->addSelect('t');
     }
 
     private function latest(QueryBuilder $queryBuilder = null): QueryBuilder
@@ -59,7 +59,7 @@ class ArticleRepository extends ServiceEntityRepository
 
     }
 
-    private function published(QueryBuilder $queryBuilder = null): QueryBuilder
+    public function published(QueryBuilder $queryBuilder = null): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder($queryBuilder)->andWhere('a.publishedAt IS NOT NULL');
 
@@ -68,6 +68,21 @@ class ArticleRepository extends ServiceEntityRepository
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
         return $queryBuilder ?? $this->createQueryBuilder('a');
+    }
+
+    public function findLatestByUserQuery(User $user)
+    {
+        $queryBuilder = $this->createQueryBuilder('a');
+        return
+            $this->latest($queryBuilder)
+                ->leftJoin('a.comments', 'c')
+                ->addSelect('c')
+                ->leftJoin('a.tags', 't')
+                ->addSelect('t')
+                ->leftJoin('a.author', 'u')
+                ->andWhere('a.author = :user')
+                ->setParameter('user', $user)
+                ;
     }
 
 

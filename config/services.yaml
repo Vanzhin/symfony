@@ -5,7 +5,11 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
   cache_adapter: cache.adapter.filesystem
-
+  default_image_dir: 'images'
+  default_image: '%default_image_dir%/test.jpeg'
+  article_upload: 'uploads/articles'
+  article_upload_dir: '%kernel.project_dir%/public/%article_upload%'
+  default_article_upload_dir: '%kernel.project_dir%/public/%default_image_dir%'
 services:
   # default configuration for services in *this* file
   _defaults:

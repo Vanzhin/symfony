@@ -31,8 +31,8 @@
                         {{ include('components/tags.html.twig', {'tags': article.tags}) }}
                     </div>
                     <div class="col-auto" style="display: contents">
-                        <img src="{{ asset(article.imagePath) }}" width="250" class="img-fluid"
-                             style="object-fit: cover" alt="123">
+                        <img src="{{ upload_asset('article_upload', article.image) }}" width="250" class="img-fluid"
+                             style="object-fit: cover" alt="{{ article.title }}">
                     </div>
                 </div>
             </div>

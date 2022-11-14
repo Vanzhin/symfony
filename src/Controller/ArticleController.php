@@ -9,12 +9,14 @@ use App\Service\SlackService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use \Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ArticleController extends AbstractController
 {
@@ -64,10 +66,10 @@ class ArticleController extends AbstractController
 
     #[Route("/article/{id}/edit", name: 'app_article_edit')]
     #[IsGranted('MANAGE_ARTICLE', 'article')]
-    public function edit(Article $article, Request $request, EntityManagerInterface $em): Response
+    public function edit(Article $article, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(ArticleFormType::class, $article);
-        if ($this->formHandle($form, $request, $em)) {
+        if ($this->formHandle($form, $request, $em, $slugger)) {
             $this->addFlash('article_flash', 'Статья обновлена.');
             return $this->redirectToRoute('app_articles_index');
         }
@@ -78,6 +80,7 @@ class ArticleController extends AbstractController
             'titleText' => 'Обновление статьи'
         ]);
     }
+
     #[Route("/article/{id}/delete", name: 'app_article_delete')]
     #[IsGranted('MANAGE_ARTICLE', 'article')]
     public function delete(Article $article, EntityManagerInterface $em): Response
@@ -91,10 +94,10 @@ class ArticleController extends AbstractController
 
     #[Route("/article/create", name: 'app_article_create')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(ArticleFormType::class);
-        if ($this->formHandle($form, $request, $em)) {
+        if ($this->formHandle($form, $request, $em, $slugger)) {
             $this->addFlash('article_flash', 'Статья создана.');
             return $this->redirectToRoute('app_articles_index');
         }
@@ -106,7 +109,7 @@ class ArticleController extends AbstractController
         ]);
     }
 
-    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em): ?FormInterface
+    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): ?FormInterface
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -114,7 +117,18 @@ class ArticleController extends AbstractController
              * @var Article $article
              */
             $article = $form->getData();
+            /**
+             * @var UploadedFile|null $image
+             */
+            $image = $form->get('image')->getData();
+            $fileName = $slugger
+                ->slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME))
+                ->append('_' . (new \DateTime())->getTimestamp())
+                ->append('.' . $image->guessExtension())
+                ->toString();
 
+            $uploadedFile = $image->move($this->getParameter('article_upload_dir'), $fileName);
+            $article->setImage($fileName);
             if (!$this->isGranted('ROLE_ADMIN_ARTICLES')) {
                 $article
                     ->setAuthor($this->getUser());

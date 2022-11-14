@@ -127,12 +127,6 @@ class Article
         return $this;
     }
 
-
-    public function getImagePath(): string
-    {
-        return $this->getImage() ? '/images/' . $this->getImage() : '/images/test.jpeg';
-    }
-
     /**
      * @return Collection<int, Comment>
      */

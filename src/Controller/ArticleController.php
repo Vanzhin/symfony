@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\ArticleFormType;
 use App\Repository\ArticleRepository;
+use App\Service\FileUploader;
 use App\Service\SlackService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -66,10 +67,10 @@ class ArticleController extends AbstractController
 
     #[Route("/article/{id}/edit", name: 'app_article_edit')]
     #[IsGranted('MANAGE_ARTICLE', 'article')]
-    public function edit(Article $article, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function edit(Article $article, Request $request, EntityManagerInterface $em, FileUploader $articleImageUploader): Response
     {
         $form = $this->createForm(ArticleFormType::class, $article);
-        if ($this->formHandle($form, $request, $em, $slugger)) {
+        if ($this->formHandle($form, $request, $em, $articleImageUploader)) {
             $this->addFlash('article_flash', 'Статья обновлена.');
             return $this->redirectToRoute('app_articles_index');
         }
@@ -94,10 +95,10 @@ class ArticleController extends AbstractController
 
     #[Route("/article/create", name: 'app_article_create')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function create(Request $request, EntityManagerInterface $em, FileUploader $articleImageUploader): Response
     {
-        $form = $this->createForm(ArticleFormType::class);
-        if ($this->formHandle($form, $request, $em, $slugger)) {
+        $form = $this->createForm(ArticleFormType::class, new Article());
+        if ($this->formHandle($form, $request, $em, $articleImageUploader)) {
             $this->addFlash('article_flash', 'Статья создана.');
             return $this->redirectToRoute('app_articles_index');
         }
@@ -109,7 +110,7 @@ class ArticleController extends AbstractController
         ]);
     }
 
-    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): ?FormInterface
+    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em, FileUploader $articleImageUploader): ?FormInterface
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -117,18 +118,11 @@ class ArticleController extends AbstractController
              * @var Article $article
              */
             $article = $form->getData();
-            /**
-             * @var UploadedFile|null $image
-             */
             $image = $form->get('image')->getData();
-            $fileName = $slugger
-                ->slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME))
-                ->append('_' . (new \DateTime())->getTimestamp())
-                ->append('.' . $image->guessExtension())
-                ->toString();
+            if ($image){
+                $article->setImage($articleImageUploader->uploadImage($image));
+            }
 
-            $uploadedFile = $image->move($this->getParameter('article_upload_dir'), $fileName);
-            $article->setImage($fileName);
             if (!$this->isGranted('ROLE_ADMIN_ARTICLES')) {
                 $article
                     ->setAuthor($this->getUser());

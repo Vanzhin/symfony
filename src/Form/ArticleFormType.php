@@ -15,7 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use function Sodium\add;
+use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ArticleFormType extends AbstractType
 {
@@ -31,13 +32,34 @@ class ArticleFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /**
+         * @var Article $article
+         */
+        $article = $options['data'] ?? null;
+
+        $imageConstraints = [
+            new Image([
+                'maxSize' => '1M'
+            ])
+        ];
+        if (!$article || !$article->getImage()) {
+            $imageConstraints[] = new NotBlank([
+                'message' => 'Необходимо загрузить изображение'
+            ]);
+        }
+
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Заголовок',
+                'attr' => ['placeholder' => 'Заголовок статьи']
+
             ])
             ->add('content', TextareaType::class, [
-                'label' => 'Содержание ',
-                'attr' => ['rows' => 5]
+                'label' => 'Содержание',
+                'attr' => [
+                    'rows' => 5,
+                    'placeholder' => 'Содержание статьи'
+                ]
 
             ])
             ->add('publishedAt', DateTimeType::class, [
@@ -50,11 +72,13 @@ class ArticleFormType extends AbstractType
                     'multiple' => true
                 ]
             )
-            ->add("image", FileType::class,[
+            ->add("image", FileType::class, [
                 'label' => 'Изображение',
                 'mapped' => false,
-            ])
-        ;
+                'required' => false,
+                'constraints' => $imageConstraints,
+
+            ]);
 
 
         if ($this->checker->isGranted('ROLE_ADMIN_ARTICLES')) {

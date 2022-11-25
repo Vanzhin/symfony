@@ -16,8 +16,12 @@ services:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    #bind:
+    bind:
       #$slackDsn: '%env(SLACK_DSN)%'
+
+      App\Service\FileUploader $articleImageUploader: '@image_uploader.article'
+#      App\Service\FileUploader $avatarImageUploader: '@image_uploader.avatar'
+
 
   # makes classes in src/ available to be used as services
   # this creates a service per class whose id is the fully-qualified class name
@@ -30,3 +34,14 @@ services:
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
+
+  image_uploader.article:
+      class: App\Service\FileUploader
+      arguments:
+        $uploadPath: '%article_upload_dir%'
+
+
+#  image_uploader.avatar:
+#    class: App\Service\FileUploader
+#    arguments:
+#      $uploadPath: 'path/to/avatar'

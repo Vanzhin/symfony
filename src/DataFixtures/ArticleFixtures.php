@@ -20,9 +20,7 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
                 ->setContent($this->faker->paragraphs($this->faker->numberBetween(2, 5), true))
                 ->setPublishedAt(new \DateTime(rand(-10, 0) . ' days'))
                 ->setAuthor($this->getRandomReferences(User::class))
-                ->setLikeCount($this->faker->numberBetween(0, 25))
                 ->addLike($this->getRandomReferences(Like::class));
-
             $tags = [];
             for ($i = 0; $i < $this->faker->numberBetween(0, 5); $i++) {
                 $tags[] =$this->getRandomReferences(Tag::class);

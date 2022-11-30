@@ -31,7 +31,7 @@
                         {{ include('components/tags.html.twig', {'tags': article.tags}) }}
                     </div>
                     <div class="col-auto" style="display: contents">
-                        <img src="{{ upload_asset('article_upload', article.image)|imagine_filter('article_preview') }}" class="img-fluid"
+                        <img src="{{ article.image ? article.image | imagine_filter('article_preview') : upload_asset('article_upload', article.image) | imagine_filter('article_preview') }}" class="img-fluid"
                              style="object-fit: cover" alt="{{ article.title }}">
                     </div>
                 </div>

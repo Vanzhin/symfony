@@ -8,16 +8,15 @@ use App\Repository\ArticleRepository;
 use App\Service\FileUploader;
 use App\Service\SlackService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use \Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ArticleController extends AbstractController
 {
@@ -82,11 +81,16 @@ class ArticleController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws FilesystemException
+     */
     #[Route("/article/{id}/delete", name: 'app_article_delete')]
     #[IsGranted('MANAGE_ARTICLE', 'article')]
-    public function delete(Article $article, EntityManagerInterface $em): Response
+    public function delete(Article $article, EntityManagerInterface $em, FileUploader $articleImageUploader): Response
     {
+
         $em->remove($article);
+        $articleImageUploader->delete($article->getImage());
         $em->flush();
         $this->addFlash('article_flash', 'Статья удалена.');
         return $this->redirectToRoute('app_articles_index');
@@ -120,7 +124,7 @@ class ArticleController extends AbstractController
             $article = $form->getData();
             $image = $form->get('image')->getData();
             if ($image){
-                $article->setImage($articleImageUploader->uploadImage($image));
+                $article->setImage($articleImageUploader->uploadImage($image, $article->getImage()));
             }
 
             if (!$this->isGranted('ROLE_ADMIN_ARTICLES')) {

@@ -7,6 +7,12 @@ liip_imagine:
             web_path: ~
 
         # your filter sets are defined here
+    loaders:
+        articles_flysystem_loader:
+            flysystem:
+                filesystem_service: oneup_flysystem.upload_articles_filesystem
+    data_loader:  articles_flysystem_loader
+
     filter_sets:
         cache: ~
         article_thumb:

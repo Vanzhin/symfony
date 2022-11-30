@@ -5,7 +5,7 @@
 {{ form_row(articleForm.tags) }}
 
 {% if articleForm.vars.data.image %}
-    <img src="{{ articleForm.vars.data.image ? articleForm.vars.data.image | imagine_filter('article_preview') : upload_asset('article_upload', articleForm.vars.data.image) | imagine_filter('article_preview')
+    <img src="{{ (articleForm.vars.data.image ?? upload_asset('article_upload', articleForm.vars.data.image)) | imagine_filter('article_preview')
     }}"
          alt="{{ articleForm.vars.data.title }}"
          height="100">

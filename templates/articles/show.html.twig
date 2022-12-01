@@ -3,7 +3,7 @@
 {% block body %}
     <div class="p-5 mb-4 bg-light rounded-3">
         <a class="d-flex flex-column">
-            <a href="{{ upload_asset('article_upload', article.image) }}" target="_blank">
+            <a href="{{ upload_asset('article_upload_url', article.image) }}" target="_blank">
                 <img src="{{ (article.image ?? upload_asset('article_upload', article.image)) | imagine_filter('article_detail') }}" class="rounded mx-auto d-block img-fluid" width="400" style="object-fit: cover" alt="{{ article.title }}">
             </a>
             <div class="container-fluid py-5">

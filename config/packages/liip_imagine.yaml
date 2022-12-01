@@ -3,9 +3,13 @@ liip_imagine:
     # valid drivers options include "gd" or "gmagick" or "imagick"
     driver: "gd"
     resolvers:
-        default:
-            web_path: ~
-
+        flysystem_resolver:
+            flysystem:
+                filesystem_service: oneup_flysystem.upload_articles_filesystem
+                root_url: "%article_upload_url%"
+                cache_prefix: media/cache
+                visibility: public
+    cache: flysystem_resolver
         # your filter sets are defined here
     loaders:
         articles_flysystem_loader:

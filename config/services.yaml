@@ -8,6 +8,7 @@ parameters:
   default_image_dir: 'images'
   default_image: 'test.jpeg'
   article_upload: 'uploads/articles'
+  article_upload_url: '%env(SITE_URL)%/%article_upload%'
   article_upload_dir: '%kernel.project_dir%/public/%article_upload%'
   default_article_upload_dir: '%kernel.project_dir%/public/%default_image_dir%'
 services:

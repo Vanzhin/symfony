@@ -33,7 +33,7 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
 
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             TagFixtures::class,

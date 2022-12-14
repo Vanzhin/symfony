@@ -17,7 +17,7 @@ class TimeAgoExtension extends AbstractExtension
         ];
     }
 
-    public function getDif($value)
+    public function getDif($value): string
     {
         return Carbon::make($value)->locale('ru')->diffForHumans();
     }

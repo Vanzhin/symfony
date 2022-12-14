@@ -11,6 +11,15 @@ parameters:
   article_upload_url: '%env(SITE_URL)%/%article_upload%'
   article_upload_dir: '%kernel.project_dir%/public/%article_upload%'
   default_article_upload_dir: '%kernel.project_dir%/public/%default_image_dir%'
+
+  router.request_context.host: '%env(SITE_BASE_HOST)%'
+  router.request_context.scheme: '%env(SITE_BASE_SCHEME)%'
+#  asset.request_context.secure: true
+  app.name: '%env(APP_NAME)%'
+  app.default_from_email: '%env(DEFAULT_FROM_ADDR)%'
+  app.default_from_name: '%env(DEFAULT_FROM_NAME)%'
+
+
 services:
   # default configuration for services in *this* file
   _defaults:
@@ -42,3 +51,9 @@ services:
 #    class: App\Service\FileUploader
 #    arguments:
 #      $uploadPath: 'path/to/avatar'
+
+  App\Service\Mailer:
+      arguments:
+        $appName: '%app.name%'
+        $defaultFromEmail: '%app.default_from_email%'
+        $defaultFromName: '%app.default_from_name%'

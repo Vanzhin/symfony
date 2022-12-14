@@ -3,13 +3,20 @@
 {% block title %}{{ parent() }} {{ app.user.name }} profile{% endblock %}
 
 {% block body %}
+    {% if(app.session.flashBag.peek('success')|length > 0) %}
+        <div class="alert alert-warning d-block">
+            {% for message in app.flashes('success') %}
+                <p> {{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
     <div class="row justify-content-center">
         <div class="col-lg-4 text-center">
             <img class="bg-light rounded-circle" src="{{ app.user.avatarUrl }}" alt="avatar">
             <h2 class="fw-normal">{{ app.user.name }}</h2>
             <p>Some representative placeholder content for the three columns of text below the carousel. This is the
                 first column.</p>
-            <p><a class="btn btn-secondary" href="#">View details »</a></p>
+            <p><a class="btn btn-secondary" href="{{ path('app_account_edit', {'id': app.user.id}) }}">Edit profile »</a></p>
         </div><!-- /.col-lg-4 -->
     </div>
 

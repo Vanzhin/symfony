@@ -1,0 +1,18 @@
+{{ form_start(articleForm) }}
+    {{ form_errors(articleForm) }}
+    {{ form_row(articleForm.title) }}
+    {{ form_row(articleForm.content) }}
+    {{ form_row(articleForm.tags) }}
+
+    {% if articleForm.vars.data.image %}
+        <img src="{{ (articleForm.vars.data.image ?? upload_asset('article_upload', articleForm.vars.data.image)) | imagine_filter('article_preview') }}"
+             alt="{{ articleForm.vars.data.title }}"
+             height="100">
+    {% endif %}
+
+{{ form_row(articleForm.image) }}
+{{ form_rest(articleForm) }}
+
+
+<button class="btn btn-primary" type="submit">{{ buttonText }}</button>
+{{ form_end(articleForm, {render_rest: false}) }}

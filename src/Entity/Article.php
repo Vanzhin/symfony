@@ -35,7 +35,7 @@ class Article
     private ?string $content = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\NotNull]
+//    #[Assert\NotNull]
 
     private ?\DateTime $publishedAt = null;
 

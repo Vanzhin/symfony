@@ -52,7 +52,7 @@
                                             {{ article.likes|length }}
                                     </span>
                                 </div>
-                                <div class="mb-1 text-muted flex-grow-1">{{ article.publishedAt|timeAgo }}</div>
+                                <div class="mb-1 text-muted flex-grow-1">{{ article.updatedAt|timeAgo }}</div>
                                 {{ include('components/edit_group_button.html.twig', {'id': article.id}) }}
                             </div>
                             {{ article.content|slice(0,45 ) ~ '...' }}

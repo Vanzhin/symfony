@@ -62,9 +62,6 @@ class ArticleFormType extends AbstractType
                 ]
 
             ])
-            ->add('publishedAt', DateTimeType::class, [
-                'widget' => 'single_text'
-            ])
             ->add('tags', EntityType::class, [
                     'label' => 'Тэг',
                     'class' => Tag::class,
@@ -83,13 +80,19 @@ class ArticleFormType extends AbstractType
 
         if ($this->checker->isGranted('ROLE_ADMIN_ARTICLES')) {
             $builder->add('author', EntityType::class, [
-                'label' => 'Автор',
-                'class' => User::class,
-                'choice_label' => function (User $user) {
-                    return "{$user->getName()} (id: {$user->getId()})";
-                },
-                'choices' => $this->userRepository->findAllSortedByName()
-            ]);
+                    'label' => 'Автор',
+                    'class' => User::class,
+                    'choice_label' => function (User $user) {
+                        return "{$user->getName()} (id: {$user->getId()})";
+                    },
+                    'choices' => $this->userRepository->findAllSortedByName()
+                ]
+            )
+                ->add('publishedAt', DateTimeType::class, [
+                'widget' => 'single_text',
+                'required' => false,
+            ])
+            ;
         }
 
     }

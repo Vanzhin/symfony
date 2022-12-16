@@ -9,7 +9,7 @@
             <div class="container-fluid py-5">
                 <h1 class="display-5 fw-bold">{{ article.title }}</h1>
                 <p class="col-md-8 fs-4">{{ article.content }}</p>
-                <span class="text-black">{{ article.publishedAt|timeAgo }}</span>
+                <span class="text-black">{{ article.updatedAt|timeAgo }}</span>
                 <img src="{{ article.author.avatarUrl(32) }}">
                 <span class="text-muted">{{ article.author.name }}</span>
                 {{ include('components/like_button.html.twig', {'likesCount': article.likes.count, 'slug': article.slug, 'isLikedByUser':article.isLikedBy(app.user)}) }}

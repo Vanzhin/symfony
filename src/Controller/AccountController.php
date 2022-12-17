@@ -19,7 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 
 #[IsGranted('ROLE_USER')]
-
 class AccountController extends AbstractController
 {
     #[Route('/account', name: 'app_account')]
@@ -37,14 +36,15 @@ class AccountController extends AbstractController
             'articlePagination' => $articlePagination,
         ]);
     }
+
     #[Route("/account/{id}/edit", name: 'app_account_edit')]
-    public function edit(User $user, Request $request, EntityManagerInterface $em, FileUploader $articleImageUploader): Response
+    public function edit(User $user, Request $request, EntityManagerInterface $em, FileUploader $avatarImageUploader): Response
     {
         $form = $this->createForm(UserFormType::class, $user);
-//        if ($this->formHandle($form, $request, $em, $articleImageUploader)) {
-//            $this->addFlash('article_flash', 'Статья обновлена.');
-//            return $this->redirectToRoute('app_articles_index');
-//        }
+        if ($this->formHandle($form, $request, $em, $avatarImageUploader)) {
+            $this->addFlash('profile_flash', 'Профиль обновлен.');
+            return $this->redirectToRoute('app_account');
+        }
 
         return $this->render('account/create.html.twig', [
             'userForm' => $form->createView(),
@@ -52,25 +52,20 @@ class AccountController extends AbstractController
         ]);
     }
 
-    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em, FileUploader $articleImageUploader): ?FormInterface
+    private function formHandle(FormInterface $form, Request $request, EntityManagerInterface $em, FileUploader $avatarImageUploader): ?FormInterface
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /**
-             * @var Article $article
+             * @var User $user
              */
-            $article = $form->getData();
-            $image = $form->get('image')->getData();
-            if ($image){
-                $article->setImage($articleImageUploader->uploadImage($image, $article->getImage()));
+            $user = $form->getData();
+            $avatar = $form->get('avatar')->getData();
+            if ($avatar) {
+                $user->setAvatar($avatarImageUploader->uploadImage($avatar, $user->getAvatar()));
             }
 
-            if (!$this->isGranted('ROLE_ADMIN_ARTICLES')) {
-                $article
-                    ->setAuthor($this->getUser());
-            }
-
-            $em->persist($article);
+            $em->persist($user);
             $em->flush();
             return $form;
 

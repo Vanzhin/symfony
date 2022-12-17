@@ -12,12 +12,12 @@ class FileUploader
 {
 
     private SluggerInterface $slugger;
-    private Filesystem $articleFileSystem;
+    private Filesystem $fileSystem;
 
-    public function __construct(SluggerInterface $slugger, Filesystem $articleFileSystem)
+    public function __construct(SluggerInterface $slugger, Filesystem  $fileSystem)
     {
         $this->slugger = $slugger;
-        $this->articleFileSystem = $articleFileSystem;
+        $this->fileSystem = $fileSystem;
     }
 
     /**
@@ -46,7 +46,7 @@ class FileUploader
     {
         $stream = fopen($file->getPathname(), 'r');
 
-        $result = $this->articleFileSystem->writeStream($fileName, $stream);
+        $result = $this->fileSystem->writeStream($fileName, $stream);
         if (is_resource($stream)) {
             fclose($stream);
         }
@@ -63,8 +63,8 @@ class FileUploader
      */
     public function delete(?string $fileName): void
     {
-        if ($fileName && $this->articleFileSystem->has($fileName)) {
-            $result = $this->articleFileSystem->delete($fileName);
+        if ($fileName && $this->fileSystem->has($fileName)) {
+            $result = $this->fileSystem->delete($fileName);
             if ($result) {
                 throw new \Exception("Не удалось удалить файл: $fileName");
             }

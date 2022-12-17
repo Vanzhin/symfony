@@ -3,8 +3,11 @@
 {% block body %}
     <div class="p-5 mb-4 bg-light rounded-3">
         <a class="d-flex flex-column">
-            <a href="{{ (article.image ?? upload_asset('article_upload', article.image)) | imagine_filter('article_detail')}}" target="_blank">
-                <img src="{{ (article.image ?? upload_asset('article_upload', article.image)) | imagine_filter('article_detail') }}" class="rounded mx-auto d-block img-fluid" width="400" style="object-fit: cover" alt="{{ article.title }}">
+            <a href="{{ (article.image ?? upload_asset('article_upload', article.image)) | imagine_filter('article_detail') }}"
+               target="_blank">
+                <img src="{{ (article.image ?? upload_asset('article_upload', article.image)) | imagine_filter('article_detail') }}"
+                     class="rounded mx-auto d-block img-fluid" width="400" style="object-fit: cover"
+                     alt="{{ article.title }}">
             </a>
             <div class="container-fluid py-5">
                 <h1 class="display-5 fw-bold">{{ article.title }}</h1>
@@ -15,7 +18,7 @@
                 {{ include('components/like_button.html.twig', {'likesCount': article.likes.count, 'slug': article.slug, 'isLikedByUser':article.isLikedBy(app.user)}) }}
             </div>
             {{ include('components/tags.html.twig', {'tags': article.tags}) }}
-        </div>
+    </div>
 
     </div>
     <div class="d-flex flex-column gap-1 mb-2">
@@ -26,7 +29,7 @@
                         <span class="text-black">{{ comment.createdAt|timeAgo }}</span>
                         <span class="text-muted">{{ comment.authorName }}</span>
                         {% if comment.deletedAt %}
-                        <span class="text-muted">deleted</span>
+                            <span class="text-muted">deleted</span>
                         {% endif %}
                     </div>
                     <div class="card-body">

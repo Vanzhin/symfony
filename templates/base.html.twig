@@ -37,9 +37,11 @@
                     </a>
                     {% if app.user %}
                         <div class="dropdown text-end">
-                            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
+                            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
+                               id="dropdownUser1"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ app.user.avatarUrl(40) }}" alt="avatar"
+                                <img src="{{ app.user.avatar ? (app.user.avatar | imagine_filter('avatar_thumb')) : app.user.avatarUrl(40) }}"
+                                     alt="avatar"
                                      class="rounded-circle bg-light">
                             </a>
                             <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
@@ -80,12 +82,16 @@
 {% endblock %}
 <main class="container">
     {% if is_granted('IS_IMPERSONATOR') %}
-        <div class="alert alert-warning d-block">Вы находитесь в режиме испонения роли <a  role="alert" href="{{ impersonation_exit_path(path('app_homepage') ) }}">Выйти</a></div>
+        <div class="alert alert-warning d-block">Вы находитесь в режиме испонения роли <a role="alert"
+                                                                                          href="{{ impersonation_exit_path(path('app_homepage') ) }}">Выйти</a>
+        </div>
     {% endif %}
-    {% if(app.session.flashBag.peek('article_flash')|length > 0) %}
+    {% if(app.session.flashBag.peekAll()|length > 0) %}
         <div class="alert alert-warning d-block">
-            {% for message in app.flashes('article_flash') %}
-                <p> {{ message }}</p>
+            {% for messages in app.flashes() %}
+                {% for message in messages %}
+                    <p> {{ message }}</p>
+                {% endfor %}
             {% endfor %}
         </div>
     {% endif %}
@@ -99,7 +105,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div>Для этого действия необходимо <a href="{{ path('app_login') }}">авторизоваться</a>  или <a href="{{ path('app_register') }}">зарегистрироваться</a> </div>
+                        <div>Для этого действия необходимо <a href="{{ path('app_login') }}">авторизоваться</a> или <a
+                                    href="{{ path('app_register') }}">зарегистрироваться</a></div>
                     </div>
 
                 </div>

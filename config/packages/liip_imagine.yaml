@@ -9,29 +9,63 @@ liip_imagine:
                 root_url: "%article_upload_url%"
                 cache_prefix: media/cache
                 visibility: public
-    cache: flysystem_resolver
-        # your filter sets are defined here
+        flysystem_avatar_resolver:
+            flysystem:
+                filesystem_service: oneup_flysystem.upload_avatar_filesystem
+                root_url: "%avatar_upload_url%"
+                cache_prefix: media/cache
+                visibility: public
+#    cache: ~
+#    data_loader: ~
+
     loaders:
         articles_flysystem_loader:
             flysystem:
                 filesystem_service: oneup_flysystem.upload_articles_filesystem
-    data_loader:  articles_flysystem_loader
+        avatar_flysystem_loader:
+            flysystem:
+                filesystem_service: oneup_flysystem.upload_avatar_filesystem
+    # your filter sets are defined here
 
     filter_sets:
         cache: ~
         article_thumb:
+            cache: flysystem_resolver
+            data_loader: articles_flysystem_loader
             quality: 50
             filters:
                 thumbnail: { size: [120, 120], mode: outbound }
 
         article_preview:
+            cache: flysystem_resolver
+            data_loader: articles_flysystem_loader
             quality: 75
             filters:
                 thumbnail: { size: [ 240, 240 ], mode: outbound }
 
         article_detail:
+            cache: flysystem_resolver
+            data_loader: articles_flysystem_loader
             quality: 90
             filters:
                 thumbnail: { size: [ 480, 480 ], mode: outbound }
 
+        avatar_detail:
+            cache: flysystem_avatar_resolver
+            data_loader: avatar_flysystem_loader
+            quality: 90
+            filters:
+                thumbnail: { size: [ 480, 480 ], mode: outbound }
+        avatar_preview:
+            cache: flysystem_avatar_resolver
+            data_loader: avatar_flysystem_loader
+            quality: 75
+            filters:
+                thumbnail: { size: [ 240, 240 ], mode: outbound }
+        avatar_thumb:
+            cache: flysystem_avatar_resolver
+            data_loader: avatar_flysystem_loader
+            quality: 50
+            filters:
+                thumbnail: { size: [ 40, 40 ], mode: outbound }
 

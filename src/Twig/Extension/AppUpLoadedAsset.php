@@ -19,9 +19,9 @@ class AppUpLoadedAsset implements RuntimeExtensionInterface
         $this->packages = $packages;
     }
 
-    public function asset(string $config, ?string $fileName, string $defaultImagePath = 'default_image' ): string
+    public function asset(string $config, ?string $fileName, string $defaultImagePath = 'default_image'): string
     {
-        if ($fileName){
+        if ($fileName) {
             return $this->packages->getUrl($this->parameterBag->get($config) . DIRECTORY_SEPARATOR . $fileName);
 
         }

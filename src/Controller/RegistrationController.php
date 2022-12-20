@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserRegistrationEvent;
 use App\Form\RegistrationFormType;
 use App\Message\SendEmailMessage;
 use App\Message\SendVerificationEmailMessage;
@@ -11,6 +12,8 @@ use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
@@ -33,7 +36,12 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $authenticator, EntityManagerInterface $entityManager, MessageBusInterface $messageBus): Response
+    public function register(Request $request,
+                             UserPasswordHasherInterface $userPasswordHasher,
+                             UserAuthenticatorInterface $userAuthenticator,
+                             LoginFormAuthenticator $authenticator,
+                             EntityManagerInterface $entityManager,
+                             EventDispatcherInterface $eventDispatcher): Response
     {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_account');
@@ -64,9 +72,9 @@ class RegistrationController extends AbstractController
 //            );
 
             // do anything else you need here, like send an email
+            $eventDispatcher->dispatch(new UserRegistrationEvent($user));
+//
 
-            $messageBus->dispatch(new SendEmailMessage($user, 'welcome'));
-            $messageBus->dispatch(new SendEmailMessage($user, 'verify'));
 
             return $userAuthenticator->authenticateUser(
                 $user,
